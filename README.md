@@ -1,6 +1,6 @@
 # Browsable Macintosh Classic
 
-This project was originally located at https://github.com/jsdf/pce . Browsable Macintosh Classic is an attempt to fix the issue about save your program data.
+This project was originally located at https://github.com/jsdf/pce . Browsable Macintosh Classic is an attempt to fix the issue about save your valuable program data over the browser.
 
 ## How to install it on Ubuntu:
 
