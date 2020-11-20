@@ -1,12 +1,13 @@
-#Browsable Macintosh Classic
+# Browsable Macintosh Classic
 
 This project was originally located at https://github.com/jsdf/pce . Browsable Macintosh Classic is an attempt to fix the issue about save your program data.
 
-##How to install it on Ubuntu:
+## How to install it on Ubuntu:
 
 First install Apache Server
 
 Install the depencency file:
+```bash
 sudo apt update
 sudo apt install nodejs
 sudo apt install npm
@@ -35,8 +36,10 @@ macplus({
     loadingStatus.update(remainingDependencies)
   },
 })
-
+```
 add some html index.html
+
+```bash
 <!DOCTYPE html>
 <html>
   <head>
@@ -74,3 +77,4 @@ cp node_modules/pcejs-macplus/pce-macplus.wasm ./pce-macplus.wasm
 
 npm install -g browserify
 browserify index.js --ignore-missing > bundle.js <-- Execute it by opening a new terminal section with root power.
+```
