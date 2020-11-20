@@ -1,0 +1,29 @@
+{
+  "name": "pcejs-util",
+  "description": "Utils for pcejs emulator for the browser",
+  "keywords": [
+    "emulator",
+    "browserify"
+  ],
+  "author": "James Friend",
+  "version": "0.1.1",
+  "licenses": [
+    {
+      "type": "GPL",
+      "url": "https://raw.github.com/jsdf/pce/master/COPYING"
+    }
+  ],
+  "scripts": {
+    "prepare": "./umd.sh"
+  },
+  "files": [
+    "index.js",
+    "PCEJSUtil.js",
+  ],
+  "homepage": "https://github.com/jsdf/pce",
+  "bugs": "https://github.com/jsdf/pce/issues",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jsdf/pce.git"
+  }
+}
