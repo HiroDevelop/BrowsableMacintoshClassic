@@ -1,88 +1,76 @@
-# PCE.js
+#Browsable Macintosh Classic
 
-PCE.js runs classic computers in the browser. It's a port of Hampa Hug's excellent [PCE](http://www.hampa.ch/pce/) emulator, put together by [James Friend](https://jamesfriend.com.au/).
+This project was originally located at https://github.com/jsdf/pce . Browsable Macintosh Classic is an attempt to fix the issue about save your program data.
 
-PCE.js currently emulates Mac Plus, IBM PC/XT and Atari ST functionally in recent versions of Chrome and Firefox.
+##How to install it on Ubuntu:
 
-More info: 
+First install Apache Server
 
-- [Demo running Mac Plus + System 7](https://jamesfriend.com.au/pce-js/) 
-- [Why port emulators to the browser?](https://jamesfriend.com.au/why-port-emulators-browser)
+Install the depencency file:
+sudo apt update
+sudo apt install nodejs
+sudo apt install npm
+npm init <--- click enter on the questions that may appear
+npm install --save pcejs-macplus pcejs-util
+add some js index.js
 
-![PCE.js Mac Plus](https://jamesfriend.com.au/files/pcejs.png)
+var macplus = require('pcejs-macplus')
+var utils = require('pcejs-util')
+ 
+// add a loading progress bar. not required, but good ux
+var loadingStatus = utils.loadingStatus(document.querySelector('.pcejs-loading-status'))
+ 
+macplus({
+  'arguments': ['-c','pce-config.cfg','-r'],
+  autoloadFiles: [
+    'macplus-pcex.rom',
+    'mac-plus.rom',
+    'hd1.qed',
+    'pce-config.cfg',
+  ],
+  print: console.log.bind(console),
+  printErr: console.warn.bind(console),
+  canvas: document.querySelector('.pcejs-canvas'),
+  monitorRunDependencies: function (remainingDependencies) {
+    loadingStatus.update(remainingDependencies)
+  },
+})
 
-## Installing from npm
+add some html index.html
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+    .pcejs {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      font-family: sans-serif;
+      /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+      border: 0px none;
+      padding: 0;
+    }
+    .pcejs-container { margin-top: 32px }
+    /* macplus has mouse integration, so we can hide the host mouse */
+    .pcejs-canvas { cursor: none }
+    </style> 
+  </head>
+  <body>
+    <div class="pcejs pcejs-container">
+      <div class="pcejs pcejs-loading-status">Downloading...</div>
+      <div class="pcejs">
+        <canvas class="pcejs pcejs-canvas" oncontextmenu="event.preventDefault()"></canvas>
+      </div>
+    </div>
+    <script type="text/javascript" src="bundle.js"></script> 
+  </body>
+</html>
 
-PCE.js is available from npm as a set of [browserify](http://github.com/substack/node-browserify) compatible node packages.
+curl -O https://jamesfriend.com.au/pce-js/dist/macplus-system.zip
+unzip macplus-system.zip
 
-There is one for each emulator build:
-- [pcejs-macplus](http://npmjs.org/package/pcejs-macplus) - Mac Plus
-- [pcejs-ibmpc](http://npmjs.org/package/pcejs-ibmpc) - IBM PC/XT
-- [pcejs-atarist](http://npmjs.org/package/pcejs-atarist) - Atari ST
+cp node_modules/pcejs-macplus/macplus-pcex.rom ./macplus-pcex.rom
+cp node_modules/pcejs-macplus/pce-macplus.wasm ./pce-macplus.wasm
 
-See each of the above links for install and usage instructions
-
-## How to build PCE.js from source
-
-**Note:** I recommend instead just using the npm packages listed above, unless you want to hack on the C source of the emulators themselves (which is not necessary if you just want to get them running on a page).
-
-Make sure you've installed [node.js](http://nodejs.org/download/)
-
-Run `npm install` in this directory (the source root). This should install the 
-required node.js tools to build the commonjs modules and run the examples.
-
-Install the [Emscripten SDK](https://kripken.github.io/emscripten-site/docs/getting_started/downloads.html).
-
-Install and activate version 1.38.48 of the SDK
-
-```bash
-cd ../path/to/emsdk/
-./emsdk install 1.38.48
-./emsdk activate 1.38.48
-source ./emsdk_env.sh
-
-```
-Check that running `emcc -v` successfully returns current Emscripten version.
-Detailed installation instructions are on the [Emscripten SDK](https://kripken.github.io/emscripten-site/docs/getting_started/downloads.html) page.
-
-In the same terminal, return to the pcejs repository. Run `./pcejs_build env` once which will create a `pcejs_build_conf.sh` file if it 
-doesn't already exist. 
-
-Similarly you should be working with [my fork of PCE](https://github.com/jsdf/pce) on the 
-`pcejs` branch, but presumably that's where you're reading this right now.
-
-Most of the build process involves running the `./pcejs_build` bash script in the 
-root of the repo. Commands should be run like `./pcejs_build [command]` or `pcejs_build [command] [arg]`
-
-Run `./pcejs_build build [target]` to build the emulator, where `[target]` is `macplus`, 
-`ibmpc` or `atarist`. This will output a `pce-[target].js` file to `dist/`.
-
-Once the output file for the target you're interested in has been built, you can:
-- run the examples in the `example/` directory with `example/run_example.sh [target]`
-- build the npm packages in the `commonjs/[target]/` directories by running 
-  `npm run prepublish` in the respective directory.
-
-Commands you might be interested in:
-
-- build [target]: Configure, build and compile emulator to JS. [target] is either 
-  one of `macplus`, `ibmpc`, `atarist` or `native`. Specifiying an emulator arch 
-  builds the in-browser emulator JS file for that architecture. `native` builds all PCE 
-  executables normally. If you don't specify a [target] then all JS targets will
-  be built.
-- rebuild: Build last again
-- clean: Clean source tree
-- [nothing]: Build all emulator JS targets and (commonjs modules for each)
-
-Other commands (used internally by build scripts)
-
-- env: Print build environment variables
-- configure: Configure emulator build
-- make: Compile emulator source to LLVM bitcode (used by 'build')
-- remake: Recompile only changed files of emulator source to LLVM bitcode
-- afterbuild: Convert LLVM bitcode to JS
-- module: Build commonjs module (used by commonjs module prepublish scripts)
-
-
-
-
-
+npm install -g browserify
+browserify index.js --ignore-missing > bundle.js <-- Execute it by opening a new terminal section with root power.
